@@ -1,80 +1,174 @@
-# School Result Ledger — GPA Engine (P08)
+# School Result Ledger — GPA Engine
 
-A single, deterministic grading engine plus an office-facing UI: load a
-result set, get every student's GPA and letter grade, see the exact rule
-that produced every grade point, and get the three verification lists
-before results go out.
+- **Team ID:** LSH26-T015
+- **Problem ID:** P08 — School Result Processing and GPA Engine
+- **Repository:** `lsh26-t015-p08`
+- **Live URL:** PLACEHOLDER: `https://<your-username>.github.io/lsh26-t015-p08/`
 
-No build step. No server required. Open `index.html`.
+A deterministic grading engine plus an office-facing UI: load a result
+set, get every student's GPA and letter grade, see the exact rule that
+produced every grade point, and get the three verification lists before
+results go out.
 
-## Files
+---
 
-| File | Purpose |
+## Setup and run
+
+No build step, no dependencies, no server required.
+
+1. Clone or download this repository.
+2. Open `index.html` directly in a browser (double-click it, or
+   `file:///path/to/index.html`).
+3. That's it — the fixture data is embedded in `data.js`, so the app is
+   fully self-contained.
+
+To run it from a local static server instead (optional, e.g. for
+consistent relative-path behavior):
+
+```bash
+python3 -m http.server 8000
+# then open http://localhost:8000/index.html
+```
+
+To run the automated smoke test (optional, requires Node):
+
+```bash
+npm install
+python3 -m http.server 8791 &      # serve the folder in the background
+node smoke_test.js                  # headless-browser check
+```
+
+---
+
+## Proof that each requirement is met
+
+The brief's four numbered requirements, plus the clarifications (R-10
+through R-13, R-29), mapped to what's on screen and in code.
+
+### 1. Dataset: 60+ students, two classes, hard edges
+
+The organizer-supplied fixture (`data.js`, all 25 published cases) is
+embedded directly — nothing is synthesized. The default case (`PUB-01`)
+alone has 80 students across **Class 9** and **Class 10**, all with six
+compulsory subjects and one optional subject. All four required hard-edge
+students are present and verified in this data:
+
+| Hard edge | Example |
 |---|---|
-| `index.html` | Page shell — loads the three scripts below in order. |
-| `engine.js` | The grading logic. Pure functions, no DOM. This is the part that matters for correctness. |
-| `data.js` | All 25 published fixture cases, embedded as `window.FIXTURES` (so the app works from `file://` with no server/CORS issues). |
-| `app.js` | Rendering + interaction: table, tabs, search, the per-student trace drawer. |
-| `styles.css` | Visual design — a school mark-register: ruled paper, a red pen for the trace. |
-| `smoke_test.js` | Headless Puppeteer check that the page renders, the stats match the engine's own output, and the trace opens (`npm install puppeteer` then `node smoke_test.js` against a local static server). |
+| Failed subject, strong average | Student S004 — raw average 4.67, fails only Mathematics |
+| Practical fail, passing theory | Student S010 — passes theory in Chemistry/Higher Maths, fails on practical marks |
+| Optional subject below the help threshold | Student S002 — optional grade point 1.0 (≤ 2.0 contributes nothing) |
+| Absent in one subject | Student S032 — AB in Biology |
 
-## How the rules map to code (`engine.js`)
+`SCREENSHOT PLACEHOLDER`
 
-- **R-10** — mark → grade-point bands (80/70/60/50/40/33) and the letter-grade
-  bands (A+/A/A-/B/C/D/F) → `GRADE_BANDS`, `gradeBand()`, `letterFromGPA()`.
-- **R-11** — practical subjects: theory out of 75 (pass ≥25), practical out
-  of 25 (pass ≥8); failing either part fails the whole subject (grade point
-  0.0) regardless of the total → handled in `evaluateSubject()`.
-- **R-12** — absence: `"AB"` in a **compulsory** subject → grade point 0.0 and
-  the whole result is F; `"AB"` in the **optional** subject → contributes 0
-  and the student lands on the Absent checking list, but does not by itself
-  fail the student → also in `evaluateSubject()`.
-- **R-13** — `GPA = (sum of 6 compulsory grade points + max(0, optional GP − 2)) / 6`,
-  capped at 5.00, 2 decimal places → `evaluateStudent()`. Any compulsory
-  failure forces GPA to 0.00 / letter F, but the **uncancelled** average
-  (`rawGPA`) is computed and kept on the student object so the trace can
-  still show it for hand-verification.
-- **R-29** — the three checking lists, computed in `evaluateCase()`:
-  - *Optional list*: optional subject's grade point ≤ 2.0 (an absent
-    optional counts, since it contributes 0).
-  - *Practical list*: practical mark below 8 in **any** subject, compulsory
-    or optional (note: a practical fail in the *optional* subject alone
-    does not fail the student — it still shows up here for the office to
-    check, and the fixture data has real examples of exactly this).
-  - *Absent list*: `"AB"` in any subject.
-  - A student can appear on more than one list, and the UI shows this with
-    `AB` / `PR` / `OPT` badges plus the reason column on each list tab.
+### 2. Per-subject grade point, final GPA, letter grade
 
-## The trace (requirement 3)
+Implemented in `engine.js` (`evaluateSubject`, `evaluateStudent`,
+`evaluateCase`) and shown per student in the "All Students" table (GPA,
+Letter, Result columns).
 
-Click any student row to open the "script" drawer. Every subject shows the
-marks used, the grade point it produced, and the exact sentence that
-justifies it, citing the rule. Any compulsory subject that caused a fail is
-circled in red with a "← caused the fail" note, so a student with a high
-raw average who still failed is diagnosable at a glance — the failing
-subject is visually impossible to miss.
+`SCREENSHOT PLACEHOLDER`
 
-## The checking list (requirement 4)
+### 3. Per-student trace, with the failing subject identifiable
 
-The three tabs next to "All Students" are exactly the R-29 lists. Each row
-carries a plain-language reason (e.g. "Practical below pass mark in
-Chemistry, Higher Mathematics.") so a teacher can go verify by hand without
-re-deriving anything.
+Clicking any student row opens a trace drawer: every subject shows the
+marks used, the grade point produced, and the sentence that justifies it
+(citing the rule). A compulsory subject that caused a fail is circled in
+red with a "← caused the fail" note — verified against a real case
+(Lamia Islam, S002): a 3.0/2.0/1.0 start in Bangla/English/Maths, but
+Physics and Biology both fail on the practical component, correctly
+cancelling the whole result to GPA 0.00 / F, with the uncancelled average
+(1.33) still shown for hand-verification.
 
-## Using your own data
+`SCREENSHOT PLACEHOLDER`
 
-The **Load your own JSON** control accepts either a full fixture file
-(`{ "cases": [...] }`) or a single case object
-(`{ "case_id", "subjects", "compulsory", "students" }`) in the schema
-described in the brief's `format_note`. It replaces the dataset dropdown
-with whatever case IDs are in the file.
+### 4. Office checking list
 
-## Verifying correctness
+Three tabs next to "All Students" implement the R-29 lists exactly:
+Optional-Subject List, Practical-Fail List, Absent List. Each row carries
+a plain-language reason (e.g. "Practical below pass mark in Chemistry,
+Higher Mathematics.") so a teacher can verify by hand without re-deriving
+anything. A student can appear on more than one list, shown with `AB` /
+`PR` / `OPT` badges. Verified edge case: a student who fails the practical
+**only in their optional subject** (S077) correctly still shows PASS
+(only compulsory failures cancel the result), while still appearing on
+the Practical-Fail list, per R-29.
 
-`smoke_test.js` drives a real (headless) browser against the page and
-checks that the on-screen stat strip matches what `engine.js` computes
-independently, that a student's trace opens, and that the red-pen fail
-annotation renders. It's not a substitute for real unit tests, but the
-engine's small, pure-function design (`evaluateSubject` → `evaluateStudent`
-→ `evaluateCase`) makes it straightforward to unit test directly — each
-function takes plain data in and returns plain data out.
+`SCREENSHOT PLACEHOLDER`
+
+### Rule-by-rule mapping (R-10 – R-13, R-29)
+
+| Rule | Where it's implemented |
+|---|---|
+| R-10 — mark → grade point bands, letter grade bands | `GRADE_BANDS`, `gradeBand()`, `letterFromGPA()` in `engine.js` |
+| R-11 — theory/practical separate pass marks, either failing fails the subject | `evaluateSubject()` practical branch |
+| R-12 — absence in compulsory vs. optional | `evaluateSubject()` absence branch |
+| R-13 — GPA formula, 5.00 cap, compulsory-failure cancellation, uncancelled average kept visible | `evaluateStudent()` |
+| R-29 — the three checking lists | `evaluateCase()` |
+
+---
+
+## Major decisions
+
+- **Zero build step, zero server dependency.** Plain HTML/CSS/JS with
+  `<script src>` tags, so the app runs from `file://` with a double-click
+  — no npm install required to use it (only to run the optional smoke
+  test).
+- **Fixture data embedded, not fetched.** All 25 cases are inlined into
+  `data.js` as a JS object literal rather than fetched via `fetch()`,
+  avoiding CORS restrictions that block local-file fetches in some
+  browsers.
+- **Engine kept pure and separate from the UI.** `engine.js` has no DOM
+  access — every function takes plain data in and returns plain data
+  out, so grading logic can be reasoned about (and tested) independently
+  of rendering.
+- **Uncancelled average always computed, never hidden.** Per R-13, when a
+  compulsory failure forces GPA to 0.00, the raw average is still
+  calculated and shown in the trace so the office can verify the
+  arithmetic by hand rather than just trusting the cancellation.
+- **Visual design.** A school mark-register theme (ruled paper, brass
+  header, monospace numerals) with a hand-drawn red-pen circle marking
+  the exact subject that caused a fail — a direct, literal answer to the
+  brief's "the trace must show the subject that caused it."
+
+## Known limitations
+
+- Requires internet access on first load to fetch Google Fonts (Source
+  Serif 4, IBM Plex Mono, Inter, Kalam) from `fonts.googleapis.com`; the
+  app still functions with system fallback fonts if that's unreachable.
+- No automated unit-test suite beyond a single headless-browser smoke
+  test (`smoke_test.js`); correctness was verified by inspection and by
+  cross-checking on-screen stats against the engine's own computed
+  output across multiple fixture cases.
+- `data.js` embeds all 25 fixture cases inline (~430 KB) rather than
+  loading them on demand, to keep the app fully self-contained; this is
+  larger than a lazily-fetched JSON file would be.
+- The "Load your own JSON" file input accepts the documented fixture
+  schema only; it does not validate or repair malformed input beyond a
+  basic shape check.
+
+---
+
+## Approach
+
+We read the brief and clarifications first and treated the grading rules
+(R-10–R-13, R-29) as the specification to implement exactly, not to
+interpret loosely — the engine encodes each one as a small, separately
+readable function, and every subject's trace cites the rule that applies.
+We used the organizer-supplied fixture data as-is (verified byte-for-byte
+identical to the original file) rather than generating synthetic data,
+since it already contained every required hard-edge case. Once the
+grading logic was correct and cross-checked, we built the UI around it —
+a mark-register look, a per-student trace, and the three checking lists —
+and verified the whole thing end-to-end with a headless-browser smoke
+test before submission.
+
+## Team contributions
+
+| Member | Contribution |
+|---|---|
+| PLACEHOLDER1 | Prepared and structured the GitHub repository, set up GitHub Pages deployment, and handled submission logistics (EVENT.md, repository settings, final push). |
+| PLACEHOLDER2 | Built the application: prompted, reviewed, and iterated on the grading engine and UI with Claude, and verified the generated code against the brief's rules. |
+| PLACEHOLDER3 | Quality assurance: tested all four required hard-edge cases against the live app, cross-checked the checking lists and trace output against the fixture data, and verified the requirement-by-requirement proof in this README. |
+| PLACEHOLDER4 | Documentation: wrote/reviewed README.md, LICENSES.md, and evaluation-manifest.json, and captured the screenshots used as evidence. |

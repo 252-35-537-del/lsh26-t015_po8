@@ -1,0 +1,52 @@
+{
+  "_note": "Structure inferred from the brief's requirements — replace this file's fields with the official participant-pack template if the exact schema differs.",
+  "team_id": "LSH26-T015",
+  "problem_id": "P08",
+  "repository": "lsh26-t015-p08",
+  "submission": {
+    "live_url": "PLACEHOLDER: https://<your-username>.github.io/lsh26-t015-p08/",
+    "source_url": "PLACEHOLDER: https://github.com/<your-username>/lsh26-t015-p08"
+  },
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "description": "At least 60 students across two classes, six compulsory subjects, one optional fourth subject, practical subjects with separate theory/practical marks, and at least 8 students on hard edges (failed subject with strong average, practical fail with passing theory, optional below help threshold, absent in one subject).",
+      "met": true,
+      "evidence": "data.js embeds the organizer-supplied fixture (25 cases, e.g. PUB-01 has 80 students across Class 9 and Class 10). All four named hard-edge cases are present and verified in the dataset (see README 'Proof requirements are met').",
+      "screenshot": "SCREENSHOT PLACEHOLDER"
+    },
+    {
+      "id": "REQ-2",
+      "description": "Work out each student's result: grade point per subject, final GPA, letter grade.",
+      "met": true,
+      "evidence": "engine.js: evaluateSubject(), evaluateStudent(), evaluateCase().",
+      "screenshot": "SCREENSHOT PLACEHOLDER"
+    },
+    {
+      "id": "REQ-3",
+      "description": "Per-student trace: mark used, grade point produced, and the rule that decided it for every subject; the subject that caused a fail must be identifiable for high-average students who still failed.",
+      "met": true,
+      "evidence": "app.js openTrace()/subjectRow(): per-subject trace table with rule citations; failing compulsory subjects get a red-pen circle annotation and '\u2190 caused the fail' label.",
+      "screenshot": "SCREENSHOT PLACEHOLDER"
+    },
+    {
+      "id": "REQ-4",
+      "description": "Office checking list: every student affected by the optional-subject rule, a practical fail, or an absent mark.",
+      "met": true,
+      "evidence": "app.js renderTabs()/renderTable(): three list tabs (Optional-Subject List, Practical-Fail List, Absent List) driven by engine.js evaluateCase().lists, each with a plain-language reason per student.",
+      "screenshot": "SCREENSHOT PLACEHOLDER"
+    },
+    {
+      "id": "REQ-5-clarifications",
+      "description": "Grading rules R-10 to R-13 and the R-29 checking-list definitions implemented exactly as specified.",
+      "met": true,
+      "evidence": "engine.js: GRADE_BANDS, THEORY_PASS/PRACTICAL_PASS constants, GPA formula with cap and compulsory-failure cancellation, R-29 list definitions.",
+      "screenshot": "SCREENSHOT PLACEHOLDER"
+    }
+  ],
+  "known_limitations": [
+    "Requires internet access on first load to fetch Google Fonts (Source Serif 4, IBM Plex Mono, Inter, Kalam); the app still functions with system fallback fonts if fonts.googleapis.com is unreachable.",
+    "No automated unit-test suite beyond a single headless-browser smoke test (smoke_test.js); correctness was verified by inspection and by cross-checking on-screen stats against the engine's own output.",
+    "data.js embeds all 25 fixture cases inline (~430 KB) for zero-server file:// compatibility; this is larger than a fetched JSON file would be over the wire."
+  ]
+}
