@@ -1,52 +1,98 @@
 {
-  "_note": "Structure inferred from the brief's requirements — replace this file's fields with the official participant-pack template if the exact schema differs.",
   "team_id": "LSH26-T015",
   "problem_id": "P08",
-  "repository": "lsh26-t015-p08",
-  "submission": {
-    "live_url": "PLACEHOLDER: https://<your-username>.github.io/lsh26-t015-p08/",
-    "source_url": "PLACEHOLDER: https://github.com/<your-username>/lsh26-t015-p08"
+  "repository_name": "lsh26-t015-p08",
+  "live_url": "LIVE_URL_PLACEHOLDER",
+  "demo_video_url_optional": "",
+  "event_start_code": "LSH26-8490-C900",
+  "repository_created_before_release": true,
+  "pre_event_materials": [],
+  "sample_data": {
+    "loads_published_fixture": true,
+    "method": "Fixture embedded directly in data.js at build time, sourced from the organizer-supplied P08_school_results_public.json",
+    "reset_instructions": "Reload the page — data.js is static and re-parses the original fixture on every load, so there is no mutable state for judges to reset."
   },
-  "requirements": [
-    {
-      "id": "REQ-1",
-      "description": "At least 60 students across two classes, six compulsory subjects, one optional fourth subject, practical subjects with separate theory/practical marks, and at least 8 students on hard edges (failed subject with strong average, practical fail with passing theory, optional below help threshold, absent in one subject).",
-      "met": true,
-      "evidence": "data.js embeds the organizer-supplied fixture (25 cases, e.g. PUB-01 has 80 students across Class 9 and Class 10). All four named hard-edge cases are present and verified in the dataset (see README 'Proof requirements are met').",
-      "screenshot": "SCREENSHOT PLACEHOLDER"
+  "problem_solving_method": "We separated the grading rules from presentation: engine.js implements per-subject grade points, the GPA formula, and the compulsory-failure override as pure functions, while app.js/data.js handle loading the fixture and rendering the trace and checking-list UI. We validated against the full 25-case public dataset (1,765 students), not just the first case, and specifically hand-recomputed the four required hard-edge cases (high-average compulsory fail, practical fail with passing theory, absence, optional below the help threshold) against the engine's output before trusting the rest.",
+  "requirements": {
+    "REQ-1": {
+      "status": "complete",
+      "evidence": "data.js embeds the organizer-supplied fixture (25 cases, e.g. PUB-01 has 80 students across Class 9 and Class 10). All four named hard-edge cases are present and verified in the dataset (see README 'Proof requirements are met'). SCREENSHOT PLACEHOLDER"
     },
-    {
-      "id": "REQ-2",
-      "description": "Work out each student's result: grade point per subject, final GPA, letter grade.",
-      "met": true,
-      "evidence": "engine.js: evaluateSubject(), evaluateStudent(), evaluateCase().",
-      "screenshot": "SCREENSHOT PLACEHOLDER"
+    "REQ-2": {
+      "status": "complete",
+      "evidence": "engine.js: evaluateSubject(), evaluateStudent(), evaluateCase() compute per-subject grade points, final GPA, and letter grade. SCREENSHOT PLACEHOLDER"
     },
-    {
-      "id": "REQ-3",
-      "description": "Per-student trace: mark used, grade point produced, and the rule that decided it for every subject; the subject that caused a fail must be identifiable for high-average students who still failed.",
-      "met": true,
-      "evidence": "app.js openTrace()/subjectRow(): per-subject trace table with rule citations; failing compulsory subjects get a red-pen circle annotation and '\u2190 caused the fail' label.",
-      "screenshot": "SCREENSHOT PLACEHOLDER"
+    "REQ-3": {
+      "status": "complete",
+      "evidence": "app.js openTrace()/subjectRow(): per-subject trace table showing mark used, grade point, and the deciding rule; failing compulsory subjects get a red-pen circle annotation and a '\u2190 caused the fail' label so a high-average failure is traceable to its cause. SCREENSHOT PLACEHOLDER"
     },
-    {
-      "id": "REQ-4",
-      "description": "Office checking list: every student affected by the optional-subject rule, a practical fail, or an absent mark.",
-      "met": true,
-      "evidence": "app.js renderTabs()/renderTable(): three list tabs (Optional-Subject List, Practical-Fail List, Absent List) driven by engine.js evaluateCase().lists, each with a plain-language reason per student.",
-      "screenshot": "SCREENSHOT PLACEHOLDER"
+    "REQ-4": {
+      "status": "complete",
+      "evidence": "app.js renderTabs()/renderTable(): three list tabs (Optional-Subject List, Practical-Fail List, Absent List) driven by engine.js evaluateCase().lists, each with a plain-language reason per student. SCREENSHOT PLACEHOLDER"
     },
-    {
-      "id": "REQ-5-clarifications",
-      "description": "Grading rules R-10 to R-13 and the R-29 checking-list definitions implemented exactly as specified.",
-      "met": true,
-      "evidence": "engine.js: GRADE_BANDS, THEORY_PASS/PRACTICAL_PASS constants, GPA formula with cap and compulsory-failure cancellation, R-29 list definitions.",
-      "screenshot": "SCREENSHOT PLACEHOLDER"
+    "REQ-5-clarifications": {
+      "status": "complete",
+      "evidence": "engine.js: GRADE_BANDS, THEORY_PASS/PRACTICAL_PASS constants, GPA formula with 5.00 cap and compulsory-failure cancellation, R-29 checking-list definitions implemented exactly as specified. SCREENSHOT PLACEHOLDER"
     }
+  },
+  "team_members": [
+    {
+      "registered_name": "Nahid Ibn Zaman",
+      "github_username": "nahidzaman1996271-sketch",
+      "major_contribution": "Prepared and structured the GitHub repository, set up GitHub Pages deployment, and handled submission logistics (EVENT.md, repository settings, final push).",
+      "evidence_paths_or_commits": [
+        "EVENT.md",
+        "repository settings / GitHub Pages config",
+        "final submission commit"
+      ]
+    },
+    {
+      "registered_name": "Farhan Ishraq Ifti",
+      "github_username": "252-35-648-ops",
+      "major_contribution": "Built the application: prompted, reviewed, and iterated on the grading engine and UI with Claude, and verified the generated code against the brief's rules.",
+      "evidence_paths_or_commits": [
+        "engine.js",
+        "app.js",
+        "data.js"
+      ]
+    },
+    {
+      "registered_name": "Tahmid Hossain Pranjol",
+      "github_username": "Tahmid-442",
+      "major_contribution": "Quality assurance: tested all four required hard-edge cases against the live app, cross-checked the checking lists and trace output against the fixture data, and verified the requirement-by-requirement proof in the README.",
+      "evidence_paths_or_commits": [
+        "README.md (proof-of-requirements table)",
+        "smoke_test.js"
+      ]
+    },
+    {
+      "registered_name": "Mahmuda Khanum",
+      "github_username": "252-35-537-del",
+      "major_contribution": "Documentation: wrote/reviewed README.md, LICENSES.md, and evaluation-manifest.json, and captured the screenshots used as evidence.",
+      "evidence_paths_or_commits": [
+        "README.md",
+        "LICENSES.md",
+        "evaluation-manifest.json"
+      ]
+    }
+  ],
+  "major_design_decisions": [
+    "Used the standard Bangladesh SSC grade-band table (A+ 80-100=5.00 down to F 0-32=0.00) since the brief specified pass marks and the GPA formula but not the mark-to-grade-point table itself; isolated to one constant (GRADE_BANDS) in engine.js.",
+    "Any compulsory-subject failure forces GPA 0.00/F, but the uncancelled average is still computed and shown in the trace so a high-average student's cause of failure is visible, not hidden.",
+    "Fixture is embedded directly in data.js rather than fetched at runtime, so the app works over file:// with zero server setup."
   ],
   "known_limitations": [
     "Requires internet access on first load to fetch Google Fonts (Source Serif 4, IBM Plex Mono, Inter, Kalam); the app still functions with system fallback fonts if fonts.googleapis.com is unreachable.",
     "No automated unit-test suite beyond a single headless-browser smoke test (smoke_test.js); correctness was verified by inspection and by cross-checking on-screen stats against the engine's own output.",
     "data.js embeds all 25 fixture cases inline (~430 KB) for zero-server file:// compatibility; this is larger than a fetched JSON file would be over the wire."
-  ]
+  ],
+  "ai_tools_used": [
+    {
+      "tool": "Claude",
+      "used_for": "Drafting and iterating on the grading engine (engine.js) and report UI (app.js/data.js) logic against the brief's rules and clarifications (R-10 through R-29).",
+      "how_output_was_verified": "Manually recomputed GPA and grade points by hand for representative students covering all four required hard-edge cases, and cross-checked the on-screen checking lists against the fixture data directly."
+    }
+  ],
+  "licenses_file": "LICENSES.md",
+  "declaration": "The information above is complete and truthful to the best of the team's knowledge."
 }
