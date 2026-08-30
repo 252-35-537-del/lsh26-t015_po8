@@ -165,10 +165,9 @@ and verified the whole thing end-to-end with a headless-browser smoke
 test before submission.
 
 ## Team contributions
-
-| Member | Contribution |
-|---|---|
-| PLACEHOLDER1 | Prepared and structured the GitHub repository, set up GitHub Pages deployment, and handled submission logistics (EVENT.md, repository settings, final push). |
-| PLACEHOLDER2 | Built the application: prompted, reviewed, and iterated on the grading engine and UI with Claude, and verified the generated code against the brief's rules. |
-| PLACEHOLDER3 | Quality assurance: tested all four required hard-edge cases against the live app, cross-checked the checking lists and trace output against the fixture data, and verified the requirement-by-requirement proof in this README. |
-| PLACEHOLDER4 | Documentation: wrote/reviewed README.md, LICENSES.md, and evaluation-manifest.json, and captured the screenshots used as evidence. |
+| Registered name | GitHub username | What they mainly built | Where to see it |
+|---|---|---|---|
+| Nahid Ibn Zaman | nahidzaman1996271-sketch | Repository structure, GitHub Pages deployment, and submission logistics | `EVENT.md`, repository settings, final submission commit |
+| Farhan Ishraq Ifti | 252-35-648-ops | The grading engine and report UI — prompted, reviewed, and iterated with Claude, and verified generated code against the brief's rules | `src/engine.py`, `src/process.py` |
+| Tahmid Hossain Pranjol | Tahmid-442 | QA — tested all four required hard-edge cases against the live app, cross-checked checking lists and trace output against the fixture data, and verified the requirement-by-requirement proof | `README.md` §4 (proof table), `output/checking_list.csv` |
+| Mahmuda Khanum | 252-35-537-del | Documentation and evidence — wrote/reviewed `README.md`, `LICENSES.md`, and `evaluation-manifest.json`, and captured screenshots | `README.md`, `LICENSES.md`, `evaluation-manifest.json` |
