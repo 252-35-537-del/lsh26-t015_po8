@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>School Result Ledger — GPA Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Kalam:wght@400;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="page">
+
+  <header class="ledger-header">
+    <div>
+      <p class="plate-num">FORM XR — RESULT REGISTER</p>
+      <h1>School Result Ledger</h1>
+      <p class="sub">Every mark, every grade point, every rule that produced it — worked out the same way, every time, and shown before anything is published.</p>
+    </div>
+    <div class="rules-tag">R-10 · R-11 · R-12 · R-13 · R-29</div>
+  </header>
+
+  <div class="controls">
+    <div class="control-group">
+      <label for="caseSelect">Dataset</label>
+      <select id="caseSelect"></select>
+    </div>
+    <div class="control-group">
+      <label for="classSelect">Class</label>
+      <select id="classSelect"></select>
+    </div>
+    <div class="control-group grow">
+      <label for="search">Find a student</label>
+      <input type="search" id="search" placeholder="Name or ID…" />
+    </div>
+    <div class="control-group">
+      <label for="fileInput">Load your own JSON</label>
+      <input type="file" id="fileInput" accept="application/json" />
+    </div>
+  </div>
+
+  <div class="stat-strip" id="statStrip"></div>
+
+  <div class="tabs" id="tabs"></div>
+  <div class="panel" id="tableWrap"></div>
+
+  <footer class="credit">Grading logic lives in engine.js — every subject cites the rule that produced its grade point.</footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="script">
+    <div class="script-head" id="scriptHead"></div>
+    <div class="script-body" id="scriptBody"></div>
+  </div>
+</div>
+
+<script src="engine.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

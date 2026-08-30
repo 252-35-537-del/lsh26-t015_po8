@@ -1,0 +1,9 @@
+{
+  "name": "school-result-ledger",
+  "version": "1.0.0",
+  "description": "P08 School Result Processing and GPA Engine — static, no-build client app.",
+  "private": true,
+  "devDependencies": {
+    "puppeteer": "^24.0.0"
+  }
+}
